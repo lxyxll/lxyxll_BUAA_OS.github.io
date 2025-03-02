@@ -47,8 +47,7 @@ int strncmp(const char *s1, const char *s2, size_t n) {
     return 0;
 }
 
-char *strcat(char *dst, const char *src) {
-    if(dst == NULL || src == )
+char *strcat(char *dst, const char *src) {i
     const char *str = src;
     char *pos = dst;
     while(*pos != '\0'){
@@ -62,8 +61,8 @@ char *strcat(char *dst, const char *src) {
 }
 
 char *strncat(char *dst, const char *src, size_t n){
-    const char *str = *src;
-    char *pos = *dst;
+    const char *str = src;
+    char *pos = dst;
     size_t num = 0;
     while(*pos != '\0') {
 	    pos++;
