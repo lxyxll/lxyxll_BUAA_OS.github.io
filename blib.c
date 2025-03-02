@@ -48,8 +48,9 @@ int strncmp(const char *s1, const char *s2, size_t n) {
 }
 
 char *strcat(char *dst, const char *src) {
-    const char *str = *src;
-    char *pos = *dst;
+    if(dst == NULL || src == )
+    const char *str = src;
+    char *pos = dst;
     while(*pos != '\0'){
           pos++;
 	    }
@@ -89,22 +90,23 @@ char *strchr(const char *str, int character){
 
 char* strsep(char** stringp, const char* delim){
     char *start = *stringp;
-    const char *sepstr = delim;
-    char *find = NULL;
+    char *find = start;
+    int found = 0;
     if(*stringp == NULL) {
 	    return NULL;
     }
-         while(*sepstr != '\0') {
-              find = strchr((const char*)start,*sepstr);
-	      if(find != NULL)
+         while(*find != '\0') {
+             
+	      if(strchr(delim,*find) != NULL)
 		     {
                        *find = '\0';
+		       found = 1;
 			break;
 		     }
-	      sepstr++;
+	      find++;
 	 }
 
-    if(find != NULL) {
+    if(found == 1) {
     *stringp = find + 1;
     return start;
     }
