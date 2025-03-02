@@ -1,7 +1,12 @@
 #include <blib.h>
 
 size_t strlen(const char *s) {
-    panic("please implement");
+    const char *pos = s;
+    size_t  num = 0;
+    while (*pos++ != '\0') {
+	    num++;
+    }
+    return num;
 }
 
 char *strcpy(char *dst, const char *src) {
@@ -43,11 +48,32 @@ int strncmp(const char *s1, const char *s2, size_t n) {
 }
 
 char *strcat(char *dst, const char *src) {
-    panic("please implement");
+    const char *str = *src;
+    char *pos = *dst;
+    while(*pos != '\0'){
+          pos++;
+	    }
+    while(*str != '\0') {
+	    *pos++ = *str++;
+    }
+    *pos = '\0';
+    return dst;
 }
 
 char *strncat(char *dst, const char *src, size_t n){
-    panic("please implement");
+    const char *str = *src;
+    char *pos = *dst;
+    size_t num = 0;
+    while(*pos != '\0') {
+	    pos++;
+    }
+    while(*str != '\0' && num < n) {
+	    *pos++ = *str++;
+	    num++;
+    }
+    *pos = '\0';
+    return dst;
+
 }
 
 char *strchr(const char *str, int character){
@@ -62,7 +88,30 @@ char *strchr(const char *str, int character){
 }
 
 char* strsep(char** stringp, const char* delim){
-    panic("please implement");
+    char *start = *stringp;
+    const char *sepstr = delim;
+    char *find = NULL;
+    if(*stringp == NULL) {
+	    return NULL;
+    }
+         while(*sepstr != '\0') {
+              find = strchr((const char*)start,*sepstr);
+	      if(find != NULL)
+		     {
+                       *find = '\0';
+			break;
+		     }
+	      sepstr++;
+	 }
+
+    if(find != NULL) {
+    *stringp = find + 1;
+    return start;
+    }
+    else {
+    *stringp = NULL;
+    return start;
+    }
 }
 
 
