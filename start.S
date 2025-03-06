@@ -22,11 +22,11 @@ EXPORT(_start_mips)
 	/* Load the address of the string 'str' into the first parameter register. */
 	la      a0, str
 	/* use 'addiu  sp, sp, <x>' to push a proper-sized frame onto the stack for Nonleaf function 'print_str'. */
-	addiu sp, sp, 16
+	addiu sp, sp, -16
 
 	jal     print_str
 	/* use 'addiu  sp, sp, <x>' to restore stack pointer. */
-	addiu sp, sp, -16
+	addiu sp, sp, 16
 
 	/* Set the first four parameters. */
 	li      a0, 0
@@ -34,7 +34,7 @@ EXPORT(_start_mips)
 	li      a2, 2
 	li      a3, 3
 	/* use 'addiu  sp, sp, <x>' to push a proper-sized frame onto the stack for Nonleaf function 'hello'. */
-	addiu sp, sp, 32
+	addiu sp, sp, -32
 
 	lw      t1, var	
 	li      t2, 5
