@@ -3,20 +3,17 @@
 out: calc case_all
 	gcc calc.c -o calc
 	calc | ./calc.c | out
-case_add:casegen.c
+casegen:casegen.c
 	gcc casegen.c -o casegen
+case_add:casegen
 	./casegen add 100 > case_add
-case_sub:casegen.c
-	gcc casegen.c -o casegen
+case_sub:casegen
 	./casegen sub 100 > case_sub
-case_mul:casegen.c
-	gcc casegen.c -o casegen
+case_mul:casegen
 	./casegen mul 100 > case_mul
-case_div:casegen.c
-	gcc casegen.c -o casegen
+case_div:casegen
 	./casegen div 100 > case_div
-case_all:casegen.c
-	make case_add && make case_sub && make case_mul && make case_div
+case_all:case_add case_sub case_mul case_div
 	cat case_add case_sub case_mul case_div > case_all
 	
 clean:
