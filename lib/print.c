@@ -139,7 +139,31 @@ void vprintfmt(fmt_callback_t out, void *data, const char *fmt, va_list ap) {
                          s = (char *)va_arg(ap, char *);
                          print_str(out, data, s, width, ladjust);
                          break;
- 
+                case 'k':
+		       s = (char *)va_arg(ap,char*);
+		       print_str(out, data, s, width, ladjust);
+		       char *temp = " >= ";
+                       print_str(out,data,temp,4,1);
+                       if (long_flag) {
+                                  num = va_arg(ap, long int);
+                          } else {
+                                  num = va_arg(ap, int);
+                          }
+  
+                          /*
+                           * Refer to other parts (case 'b', case 'o', etc.) and func 'print_num' to
+                           * complete this part. Think the differences between case 'd' and the
+                           * others. (hint: 'neg_flag').
+                           */
+                          /* Exercise 1.4: Your code here. (8/8) */
+                          if (num < 0)
+                          {
+                                  neg_flag = 1;
+                                  num = -num;
+                          }
+                          print_num(out, data, num, 10, neg_flag, width, ladjust, padc, 0);
+                          break;
+
                  case '\0':
                          fmt--;
                          break;
