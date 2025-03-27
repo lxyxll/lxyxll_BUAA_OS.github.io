@@ -1,5 +1,6 @@
 #include <types.h>
-
+#include <print.h>
+#include <stream.h>
 void *memcpy(void *dst, const void *src, size_t n) {
 	void *dstaddr = dst;
 	void *max = dst + n;
@@ -95,3 +96,78 @@ int strcmp(const char *p, const char *q) {
 
 	return 0;
 }
+
+FILE *fmemopen(FILE*stream,void*buf,const char *mode) {
+       if(*mode == "w"){
+	       stream->ptr = (char*)buf;
+	       stream->base = (char*)buf;
+	       stream->end = (char*)buf;
+	       return stream;
+       }
+       else if(*mode == "a"){
+	       stream->base = (char*)buf;
+	       stream->ptr = (char*)strchr((const char*)buf,'\0');
+	       stream->end = (char*)strchr((const char*)buf,'\0');
+	       return stream;
+       }
+       else {
+	       return null;
+       }
+
+}
+
+int fmemprintf(FILE *stream,const char *fmt,...){
+     va_list ap;
+     va_start(ap,fmt);
+     vprintfmt(out,stream,fmt,ap);
+     va_end(ap);
+}
+
+void out(FILE*stream,const char*buf,size_t len){
+	char*ptr = stream->ptr;
+	char*end = stream->end;
+	for(int i = 0;i<len;i++){
+		*ptr = buf[i];
+		if(ptr == end){
+			end++;
+		}
+		ptr ++;
+	}
+}
+
+int fseek(FILE *stream,long offset,int fromwhere){
+     if(fromwhere == SEEK_SET){
+	     stream->ptr = stream->base + offset;
+	     if(!((stream->ptr)<(stream->base))&&!((stream->ptr)>(stream->end))){
+		     return 0;
+	     }
+	     else {
+		     return -1;
+	     }
+     }
+     else if(fromwhere == SEEK_CUR){
+	     stream->ptr = stream->ptr + offset;
+              if(!((stream->ptr)<(stream->base))&&!((stream->ptr)>(stream->end))){
+                      return 0;
+              }
+              else {
+                      return -1;
+              }
+     }
+     else if(fromwhere == SEEK_END){
+	     stream->ptr = stream->end + offset;
+             if(!((stream->ptr)<(stream->base))&&!((stream->ptr)>(stream->end))){
+                      return 0;
+              }
+              else {
+                      return -1;
+              }
+     }
+}
+
+int fclose(FILE *stream){
+	char *end = stream->end;
+	*end = '\0';
+	return 0;
+}
+
