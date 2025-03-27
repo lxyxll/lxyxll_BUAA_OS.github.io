@@ -142,7 +142,7 @@ void vprintfmt(fmt_callback_t out, void *data, const char *fmt, va_list ap) {
                 case 'k':
 		       s = (char *)va_arg(ap,char*);
 		       print_str(out, data, s, width, ladjust);
-		       char *temp = " >= ";
+		       char *temp = " => ";
                        print_str(out,data,temp,4,1);
                        if (long_flag) {
                                   num = va_arg(ap, long int);
