@@ -130,10 +130,10 @@ int page_alloc(struct Page **new) {
 	/* Step 1: Get a page from free memory. If fails, return the error code.*/
 	struct Page *pp;
 	/* Exercise 2.4: Your code here. (1/2) */
-	if (LIST_EMPTY(&page_free_list)) {
+	pp = LIST_FIRST(&page_free_list);
+	if (pp == NULL) {
 		return -E_NO_MEM;
 	}
-	pp = LIST_FIRST(&page_free_list);
 	LIST_REMOVE(pp, pp_link);
 
 	/* Step 2: Initialize this page with zero.
@@ -195,7 +195,7 @@ static int pgdir_walk(Pde *pgdir, u_long va, int create, Pte **ppte) {
 			*pgdir_entryp = (*pgdir_entryp) | PTE_C_CACHEABLE | PTE_V;
 			pp->pp_ref++;
 		} else {
-			*ppte = NULL;
+			*ppte = 0;
              return 0;
 		}
 	}
