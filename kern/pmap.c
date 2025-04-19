@@ -513,3 +513,71 @@ void page_check(void) {
 
 	printk("page_check() succeeded!\n");
 }
+#include <malloc.h>
+
+struct MBlock_list mblock_list;
+
+void malloc_init() {
+
+	printk("malloc_init begin\n");
+
+	LIST_INIT(&mblock_list);
+
+	struct MBlock *heap_begin = (struct MBlock*) HEAP_BEGIN;
+
+	printk("heap_begin: 0x%X\n", heap_begin);
+
+	heap_begin->size = HEAP_SIZE - MBLOCK_SIZE;
+	heap_begin->ptr = (void*) heap_begin->data;
+	heap_begin->free = 1;
+
+	LIST_INSERT_HEAD(&mblock_list, heap_begin, mb_link);
+
+	printk("malloc_init end\n");
+
+}
+
+void *malloc(size_t size) {
+size_t realsize = ROUND(size,8);
+struct MBlock *mblock;
+mblock = LIST_FIRST(&mblock_list);
+LIST_FOREACH(mblock,&mblock_list,mb_link){
+if(mblock->size >= realsize && mblock->free == 1){
+	break;
+}
+}
+if (mblock == NULL) {
+	return NULL;
+}
+mblock->ptr = mblock->data;
+mblock->free = 0;
+if ((mblock->size - realsize) >= (MBLOCK_SIZE + 8)) {
+struct MBlock *newmblock = (struct MBlock*)((char*)mblock->data + realsize);
+newmblock->size = mblock->size - realsize - MBLOCK_SIZE;
+newmblock->ptr = (void*)newmblock->data;
+newmblock->free = 1;
+mblock->size = realsize;
+LIST_INSERT_AFTER(mblock,newmblock,mb_link);
+}
+return mblock->data;
+}
+
+void free(void *p) {
+if(p >= HEAP_BEGIN + MBLOCK_SIZE && p <= HEAP_BEGIN + HEAP_SIZE){
+struct MBlock* mblock = (struct MBlock *)((char*)p - MBLOCK_SIZE);
+if (mblock->ptr == mblock->data){
+if(LIST_NEXT(mblock,mb_link)->free == 1){
+mblock->size = mblock->size + LIST_NEXT(mblock,mb_link)->size;
+LIST_REMOVE(LIST_NEXT(mblock,mb_link),mb_link);
+mblock->free = 1;
+}
+else if((LIST_FIRST(&mblock_list) != MBLOCK_PREV(mblock,mb_link))  && (((MBLOCK_PREV(mblock,mb_link))->free) == 1)){
+((MBLOCK_PREV(mblock,mb_link))->size) += mblock->size;
+LIST_REMOVE(mblock,mb_link);
+}
+else {
+mblock->free = 1;
+}
+}
+}
+}
