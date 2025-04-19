@@ -567,12 +567,12 @@ if(p >= HEAP_BEGIN + MBLOCK_SIZE && p <= HEAP_BEGIN + HEAP_SIZE){
 struct MBlock* mblock = (struct MBlock *)((char*)p - MBLOCK_SIZE);
 if (mblock->ptr == mblock->data){
 if(LIST_NEXT(mblock,mb_link)->free == 1){
-mblock->size = mblock->size + LIST_NEXT(mblock,mb_link)->size;
+mblock->size = mblock->size + LIST_NEXT(mblock,mb_link)->size + MBLOCK_SIZE;
 LIST_REMOVE(LIST_NEXT(mblock,mb_link),mb_link);
 mblock->free = 1;
 }
 else if((LIST_FIRST(&mblock_list) != MBLOCK_PREV(mblock,mb_link))  && (((MBLOCK_PREV(mblock,mb_link))->free) == 1)){
-((MBLOCK_PREV(mblock,mb_link))->size) += mblock->size;
+((MBLOCK_PREV(mblock,mb_link))->size) += mblock->size + MBLOCK_SIZE;
 LIST_REMOVE(mblock,mb_link);
 }
 else {
