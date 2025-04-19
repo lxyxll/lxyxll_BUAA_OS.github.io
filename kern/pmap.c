@@ -541,32 +541,30 @@ void *malloc(size_t size) {
 size_t realsize = ROUND(size,8);
 struct MBlock *mblock;
 mblock = LIST_FIRST(&mblock_list);
-while(mblock != NULL){
-if(mblock->size >= realsize){
+LIST_FOREACH(mblock,&mblock_list,mb_link){
+if(mblock->size >= realsize && mblock->free == 1){
 	break;
 }
-mblock++;
 }
 if (mblock == NULL) {
 	return NULL;
 }
-if (realsize <= mblock->size){
 mblock->ptr = mblock->data;
 mblock->free = 0;
 if ((mblock->size - realsize) >= (MBLOCK_SIZE + 8)) {
-struct MBlock *newmblock = (struct MBlock*)HEAP_BEGIN;
+struct MBlock *newmblock = (struct MBlock*)((char*)mblock->data + realsize);
 newmblock->size = mblock->size - realsize - MBLOCK_SIZE;
 newmblock->ptr = (void*)newmblock->data;
 newmblock->free = 1;
+mblock->size = realsize;
 LIST_INSERT_AFTER(mblock,newmblock,mb_link);
-}
 }
 return mblock->data;
 }
 
 void free(void *p) {
 if(p >= HEAP_BEGIN + MBLOCK_SIZE && p <= HEAP_BEGIN + HEAP_SIZE){
-struct MBlock* mblock = p - MBLOCK_SIZE;
+struct MBlock* mblock = (struct MBlock *)((char*)p - MBLOCK_SIZE);
 if (mblock->ptr == mblock->data){
 if(LIST_NEXT(mblock,mb_link)->free == 1){
 mblock->size = mblock->size + LIST_NEXT(mblock,mb_link)->size;
