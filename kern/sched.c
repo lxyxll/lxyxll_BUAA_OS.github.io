@@ -24,7 +24,7 @@ static int clock = -1; // 当前时间片，从 0 开始计数
 
 LIST_FOREACH (env, &env_edf_sched_list, env_edf_sched_link) {
 	if (clock == env->env_period_deadline){
-		env->env_period_deadline = env->env_edf_runtime + clock;
+		env->env_period_deadline = env->env_edf_period + clock;
 		env->env_runtime_left = env->env_edf_runtime;
 	}
 }
@@ -49,8 +49,11 @@ else if (env2->env_runtime_left > 0 && env2->env_period_deadline == min)
 }
 }
 if (flag == 1){
-	env_run(chosed);
+chosed->env_runtime_left --;
+env_run(chosed);
 }
+
+
 	/* (3) 使用课下实现的 RR 算法调度 env_sched_list 中的进程。 */
         static int count = 0; // remaining time slices of current env
 	struct Env *e = lastRR;
