@@ -188,7 +188,7 @@ int sys_mem_map(u_int srcid, u_int srcva, u_int dstid, u_int dstva, u_int perm) 
 	/* Return -E_INVAL if 'srcva' is not mapped. */
 	/* Exercise 4.5: Your code here. (4/4) */
     pp = page_lookup(srcenv->env_pgdir,srcva,NULL);
-	if (!pp) {
+	if (pp == NULL) {
 		return -E_INVAL;
 	}
 	/* Step 5: Map the physical page at 'dstva' in the address space of 'dstid'. */
