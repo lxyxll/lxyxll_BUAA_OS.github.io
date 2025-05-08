@@ -55,6 +55,10 @@ int syscall_set_tlb_mod_entry(u_int envid, void (*func)(struct Trapframe *));
 int syscall_mem_alloc(u_int envid, void *va, u_int perm);
 int syscall_mem_map(u_int srcid, void *srcva, u_int dstid, void *dstva, u_int perm);
 int syscall_mem_unmap(u_int envid, void *va);
+int syscall_shm_new(u_int npage);
+int syscall_shm_bind(int key, u_int va, u_int perm);
+int syscall_shm_unbind(int key, u_int va);
+int syscall_shm_free(int key);
 
 __attribute__((always_inline)) inline static int syscall_exofork(void) {
 	return msyscall(SYS_exofork, 0, 0, 0, 0, 0);
@@ -118,6 +122,12 @@ int read_map(int fd, u_int offset, void **blk);
 int remove(const char *path);
 int ftruncate(int fd, u_int size);
 int sync(void);
+
+//shm.c
+int shm_new(u_int npage);
+int shm_bind(u_int key, void *va);
+int shm_unbind(u_int key, void *va);
+int shm_free(u_int key);
 
 #define user_assert(x)                                                                             \
 	do {                                                                                       \
