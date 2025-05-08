@@ -61,7 +61,7 @@
 
 // Copy On Write. Reserved for software, used by fork.
 #define PTE_COW 0x0001
-
+#define PTE_PROTECT  0x0004
 // Shared memmory. Reserved for software, used by fork.
 #define PTE_LIBRARY 0x0002
 
