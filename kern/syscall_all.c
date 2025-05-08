@@ -498,19 +498,19 @@ int sys_shm_new(u_int npage) {
 	// Lab4-Extra: Your code here. (5/8)
 	for (int i = 0;i < N_SHM;i++){
 	   if (shm_pool[i].open == 0){
-		   struct Shm shm_find = shm_pool[i];
+		   struct Shm* shm_find = &shm_pool[i];
 	      for (int j = 0;j < npage;j++){
-	         page_alloc(&(shm_find.pages[j]));
-		 if (shm_find.pages[j] == NULL){
+	         page_alloc(&(shm_find->pages[j]));
+		 if (shm_find->pages[j] == NULL){
 		       for (int k = 0;k < j;k++){
-		         page_decref(shm_find.pages[k]);
+		         page_decref(shm_find->pages[k]);
 		       }
 		       return -E_NO_MEM;
 	          }
-		  shm_find.pages[j]->pp_ref++;
+		  shm_find->pages[j]->pp_ref++;
 	      }
-	      shm_find.npage = npage;
-	      shm_find.open = 1;
+	      shm_find->npage = npage;
+	      shm_find->open = 1;
 	      return i;
 	   }
 	}
@@ -526,9 +526,9 @@ int sys_shm_bind(int key, u_int va, u_int perm) {
 	if (shm_pool[key].open == 0){
 		return -E_SHM_NOT_OPEN;
         }
-	struct Shm shm = shm_pool[key];
-	for (int i = 0;i < shm.npage;i++){
-		page_insert(curenv->env_pgdir,curenv->env_asid,shm.pages[i],va + i*PAGE_SIZE,perm);
+	struct Shm* shm = &shm_pool[key];
+	for (int i = 0;i < shm->npage;i++){
+		page_insert(curenv->env_pgdir,curenv->env_asid,shm->pages[i],va + i*PAGE_SIZE,perm);
 	}
 	return 0;
 }
@@ -543,8 +543,8 @@ int sys_shm_unbind(int key, u_int va) {
 	       return -E_SHM_NOT_OPEN;
        }
        int addr = ROUND(va,PAGE_SIZE);
-       struct Shm shm = shm_pool[key];
-       for (int i = 0;i < shm.npage;i++){
+       struct Shm* shm = &shm_pool[key];
+       for (int i = 0;i < shm->npage;i++){
              page_remove(curenv->env_pgdir,curenv->env_pgdir,addr + i*PAGE_SIZE);
        }
 	return 0;
@@ -559,11 +559,11 @@ int sys_shm_free(int key) {
 	if (shm_pool[key].open == 0){
 		return -E_SHM_NOT_OPEN;
 	}
-	struct Shm shm = shm_pool[key];
-	for (int i = 0;i < N_SHM_PAGE;i++){
-		page_decref(shm.pages[i]);
+	struct Shm* shm = &shm_pool[key];
+	for (int i = 0;i < shm->npage;i++){
+		page_decref(shm->pages[i]);
 	}
-        shm.open = 0;
+        shm->open = 0;
 	return 0;
 }
 
