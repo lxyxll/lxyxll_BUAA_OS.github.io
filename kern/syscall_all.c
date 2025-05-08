@@ -502,7 +502,9 @@ int sys_shm_new(u_int npage) {
 	      for (int j = 0;j < npage;j++){
 	         page_alloc(&(shm_find.pages[j]));
 		 if (shm_find.pages[j] == NULL){
-		       page_free(shm_find.pages[j]);
+		       for (int k = 0;k < j;k++){
+		         page_decref(shm_find.pages[k]);
+		       }
 		       return -E_NO_MEM;
 	          }
 		  shm_find.pages[j]->pp_ref++;
@@ -523,11 +525,10 @@ int sys_shm_bind(int key, u_int va, u_int perm) {
 	// Lab4-Extra: Your code here. (6/8)
 	if (shm_pool[key].open == 0){
 		return -E_SHM_NOT_OPEN;
-	}
-	int addr = ROUND(va,PAGE_SIZE);
+        }
 	struct Shm shm = shm_pool[key];
 	for (int i = 0;i < shm.npage;i++){
-		page_insert(curenv->env_pgdir,curenv->env_asid,shm.pages[i],addr + i*PAGE_SIZE,perm);
+		page_insert(curenv->env_pgdir,curenv->env_asid,shm.pages[i],va + i*PAGE_SIZE,perm);
 	}
 	return 0;
 }
@@ -560,7 +561,7 @@ int sys_shm_free(int key) {
 	}
 	struct Shm shm = shm_pool[key];
 	for (int i = 0;i < N_SHM_PAGE;i++){
-		page_free(shm.pages[i]);
+		page_decref(shm.pages[i]);
 	}
         shm.open = 0;
 	return 0;
