@@ -16,6 +16,10 @@ u_int syscall_getenvid(void) {
 	return msyscall(SYS_getenvid);
 }
 
+int syscall_get_parent_envid(void) {
+       return msyscall(SYS_get_ppid);
+}
+
 void syscall_yield(void) {
 	msyscall(SYS_yield);
 }

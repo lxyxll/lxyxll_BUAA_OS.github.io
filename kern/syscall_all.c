@@ -46,6 +46,9 @@ u_int sys_getenvid(void) {
 	return curenv->env_id;
 }
 
+int sys_get_ppid(void) {
+       return curenv->env_parent_id;       
+}
 /* Overview:
  *   Give up remaining CPU time slice for 'curenv'.
  *
@@ -506,6 +509,7 @@ void *syscall_table[MAX_SYSNO] = {
     [SYS_cgetc] = sys_cgetc,
     [SYS_write_dev] = sys_write_dev,
     [SYS_read_dev] = sys_read_dev,
+    [SYS_get_ppid] = sys_get_ppid,
 };
 
 /* Overview:
