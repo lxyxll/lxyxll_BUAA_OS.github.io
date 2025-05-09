@@ -545,7 +545,7 @@ int sys_shm_unbind(int key, u_int va) {
        int addr = ROUND(va,PAGE_SIZE); // 没有必要，因为 va 保证页对齐
        struct Shm* shm = &shm_pool[key];
        for (int i = 0;i < shm->npage;i++){
-             page_remove(curenv->env_pgdir,curenv->env_pgdir,addr + i*PAGE_SIZE);
+             page_remove(curenv->env_pgdir,curenv->env_asid,addr + i*PAGE_SIZE);
        }
 	return 0;
 }
