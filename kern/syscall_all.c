@@ -500,8 +500,8 @@ int sys_shm_new(u_int npage) {
 	   if (shm_pool[i].open == 0){
 		   struct Shm* shm_find = &shm_pool[i];
 	      for (int j = 0;j < npage;j++){
-	         page_alloc(&(shm_find->pages[j]));
-		 if (shm_find->pages[j] == NULL){
+	         int r = page_alloc(&(shm_find->pages[j])); // page_alloc 失败时不会修改 *new 的值！
+		 if (r < 0){
 		       for (int k = 0;k < j;k++){
 		         page_decref(shm_find->pages[k]);
 		       }
@@ -542,7 +542,7 @@ int sys_shm_unbind(int key, u_int va) {
        if (shm_pool[key].open == 0){
 	       return -E_SHM_NOT_OPEN;
        }
-       int addr = ROUND(va,PAGE_SIZE);
+       int addr = ROUND(va,PAGE_SIZE); // 没有必要，因为 va 保证页对齐
        struct Shm* shm = &shm_pool[key];
        for (int i = 0;i < shm->npage;i++){
              page_remove(curenv->env_pgdir,curenv->env_pgdir,addr + i*PAGE_SIZE);
