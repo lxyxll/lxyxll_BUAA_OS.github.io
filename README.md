@@ -1,5 +1,6 @@
 **BUAA_OS实验代码**
-实验组成
+
+实验组成(含课上课下)
 * 寒假预习（Pre）：OS 的预备知识
 * Lab 0：Linux、Git、make 等基础知识
 * Lab 1：内核制作、启动和 printf
